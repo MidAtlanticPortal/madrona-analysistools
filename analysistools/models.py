@@ -1,11 +1,4 @@
-from django.contrib.gis.db import models
-from django.conf import settings
-from madrona.features.models import Feature, FeatureForm
-from madrona.common.utils import get_class
-from madrona.features import register
-from django.contrib.gis.geos import GEOSGeometry 
-from madrona.common.utils import asKml
-import os
+from features.models import Feature
 
 class Analysis(Feature):
     """
@@ -52,11 +45,15 @@ class Analysis(Feature):
 
     @classmethod
     def input_fields(klass):
-        return [f for f in klass._meta.fields if f.attname.startswith('input_')]
+        return [f 
+                for f in klass._meta.fields 
+                if f.attname.startswith('input_')]
 
     @classmethod
     def input_manytomany_fields(klass):
-        return [f for f in klass._meta.many_to_many if f.attname.startswith('input_')]
+        return [f 
+                for f in klass._meta.many_to_many 
+                if f.attname.startswith('input_')]
 
     @property
     def inputs(self):
@@ -70,7 +67,9 @@ class Analysis(Feature):
 
     @classmethod
     def output_fields(klass):
-        return [f for f in klass._meta.fields if f.attname.startswith('output_')]
+        return [f 
+                for f in klass._meta.fields 
+                if f.attname.startswith('output_')]
 
     @property
     def outputs(self):
@@ -94,9 +93,10 @@ class Analysis(Feature):
     def progress(self):
         """
         How many sub-tasks completed out of a total
-        e.g. (3,6) means 3 out of 6 pieces are complete so progress bar can show 50%
+        e.g. (3,6) means 3 out of 6 pieces are complete so progress bar can 
+        show 50%
         """
-        return (1,1)
+        return (1, 1)
 
     @property
     def done(self):
@@ -126,13 +126,20 @@ class Analysis(Feature):
             self.__dict__[f.attname] = None
 
     '''
-    Note on keyword args rerun and form: these are extracted from kwargs so that they will not cause an unexpected 
-    keyword argument error during call to super.save
-    Note on rerun:  When set to false no output fields will be cleared and the run method will not be called
-    Note on form:  This is passed from feature.views update and create methods.  In the case of m2m fields this needs to 
-    be called after super.save.  Since it also needs to be called before self.run, it will be passed from here (in kwargs)
-    to the superclass (Feature) save method.
-    (rather than its previous location in feature views update and create (after save has completed))
+    Note on keyword args rerun and form: these are extracted from kwargs so 
+    that they will not cause an unexpected keyword argument error during call 
+    to super.save
+    Note on rerun: 
+        When set to false no output fields will be cleared and the run method 
+        will not be called
+    Note on form:  
+        This is passed from feature.views update and create methods. In the
+        case of m2m fields this needs to be called after super.save.  
+    Since it also needs to be called before self.run, it will be passed from 
+    here (in kwargs) to the superclass (Feature) save method.
+    
+    (rather than its previous location in feature views update and create
+    (after save has completed))
     '''
     def save(self, rerun=True, *args, **kwargs):
         if rerun:
