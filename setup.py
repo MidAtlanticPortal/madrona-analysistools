@@ -10,7 +10,6 @@ setup(
     name='madrona-analysistools',
     version='0.0.1',
     packages=['analysistools'],
-    install_requires=[],
     include_package_data=True,
     license='TBD',
     description='Analysis Tools for Madrona',
